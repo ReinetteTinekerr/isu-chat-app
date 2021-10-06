@@ -1,11 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isu_chat_system/src/authentication/provider/providers.dart';
+import 'package:isu_chat_system/src/routes/app_router.gr.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginForm extends ConsumerWidget {
+  const LoginForm({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Size size = MediaQuery.of(context).size;
     return Form(
       child: Center(
@@ -37,7 +41,7 @@ class LoginPage extends StatelessWidget {
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Password',
-                  prefixIcon: Icon(Icons.password),
+                  prefixIcon: Icon(Icons.vpn_key),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
@@ -49,14 +53,19 @@ class LoginPage extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () {},
-                    child: Text(
+                    child: const Text(
                       'Sign Up',
                       style: TextStyle(
-                        color: Colors.grey[800],
-                      ),
+                          // color: Colors.grey[800],
+                          ),
                     ),
                   ),
-                  ElevatedButton(onPressed: () {}, child: const Text('Log in'))
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.read(authUserNotifierProvider.notifier).signIn();
+                    },
+                    child: const Text('Log in'),
+                  )
                 ],
               )
             ],
