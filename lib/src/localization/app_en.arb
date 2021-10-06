@@ -1,0 +1,6 @@
+{
+  "appTitle": "isu_chat_system",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
