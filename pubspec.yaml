@@ -18,9 +18,11 @@ dependencies:
   auto_route: ^2.4.2
   material_design_icons_flutter: ^4.0.5955
   freezed_annotation: ^0.14.3
-  hooks_riverpod: ^0.14.0+5
+  # hooks_riverpod: ^0.14.0+5
   hive: ^2.0.4
   hive_flutter: ^1.1.0
+  flutter_riverpod: ^1.0.0-dev.9
+  email_validator: ^2.0.1
 
 dev_dependencies:
   flutter_test:

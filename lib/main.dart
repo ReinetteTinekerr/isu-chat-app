@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import 'src/app.dart';
 
 const darkModeBox = 'darkMode';
@@ -10,5 +9,5 @@ Future<void> main() async {
   await Hive.initFlutter();
   await Hive.openBox(darkModeBox);
 
-  runApp(ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: InitializeMyApp()));
 }

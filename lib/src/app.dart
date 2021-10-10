@@ -1,46 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isu_chat_system/custom_theme.dart';
 import 'package:isu_chat_system/src/authentication/provider/providers.dart';
 import 'package:isu_chat_system/src/routes/app_router.gr.dart';
 
-final initializeSettings = FutureProvider<void>((ref) async {
-  final settings = ref.read(settingsControllerProvider.notifier);
+final initializeSettingsProvider = FutureProvider<void>((ref) async {
+  final settings = ref.watch(settingsControllerProvider.notifier);
   await settings.loadSettings();
 });
 
+class InitializeMyApp extends ConsumerWidget {
+  const InitializeMyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(initializeSettingsProvider);
+    return MyApp();
+  }
+}
+
 class MyApp extends ConsumerWidget {
-  MyApp({
-    Key? key,
-  }) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   final appRouter = AppRouter();
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    watch(initializeSettings);
-    final appTheme = watch(settingsControllerProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appTheme = ref.watch(settingsControllerProvider);
 
-    watch(createUserNotifierProvider.notifier).addListener((state) {
-      state.maybeMap(
+    ref.watch(authUserNotifierProvider.notifier).addListener((state) {
+      state.maybeWhen(
         orElse: () {},
-        authenticated: (_) => appRouter.pushAndPopUntil(
-          const HomeRoute(),
+        authenticated: () => appRouter.pushAndPopUntil(
+          const MainRoute(),
           predicate: (route) => false,
         ),
-        unauthenticated: (_) => appRouter.pushAndPopUntil(
-          CreateUserRoute(),
-          predicate: (route) => false,
-        ),
-        initial: (_) => context
-            .read(createUserNotifierProvider.notifier)
-            .checkAndUpdateAuthStatus(),
+        unauthenticated: () {
+          appRouter.pushAndPopUntil(
+            const AuthRoute(),
+            predicate: (route) => false,
+          );
+        },
+        initial: () async {
+          ref
+              .watch(authUserNotifierProvider.notifier)
+              .checkAndUpdateAuthStatus();
+        },
       );
     });
-
     return MaterialApp.router(
+      title: 'isu_chat_app',
       restorationScopeId: 'app',
       debugShowCheckedModeBanner: false,
       // Provide the generated AppLocalizations to the MaterialApp. This

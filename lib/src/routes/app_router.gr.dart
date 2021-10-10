@@ -7,13 +7,13 @@
 import 'package:auto_route/auto_route.dart' as _i9;
 import 'package:flutter/material.dart' as _i10;
 
-import '../authentication/create_user/create_user_page.dart' as _i8;
-import '../home/home_page.dart' as _i2;
-import '../home/sample_item_details_page.dart' as _i7;
-import '../side_drawer/grades/grades_page.dart' as _i4;
-import '../side_drawer/notes/notes_page.dart' as _i5;
-import '../side_drawer/schedule/schedule_page.dart' as _i3;
-import '../side_drawer/settings/settings_page.dart' as _i6;
+import '../authentication/login/auth_page.dart' as _i7;
+import '../authentication/profile/profile_page.dart' as _i8;
+import '../core/pages/main_page.dart' as _i2;
+import '../core/side_drawer/grades/grades_page.dart' as _i4;
+import '../core/side_drawer/notes/notes_page.dart' as _i5;
+import '../core/side_drawer/schedule/schedule_page.dart' as _i3;
+import '../core/side_drawer/settings/settings_page.dart' as _i6;
 import '../splash_page.dart' as _i1;
 
 class AppRouter extends _i9.RootStackRouter {
@@ -26,9 +26,9 @@ class AppRouter extends _i9.RootStackRouter {
       return _i9.MaterialPageX<dynamic>(
           routeData: routeData, child: const _i1.SplashPage());
     },
-    HomeRoute.name: (routeData) {
+    MainRoute.name: (routeData) {
       return _i9.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i2.HomePage());
+          routeData: routeData, child: const _i2.MainPage());
     },
     ScheduleRoute.name: (routeData) {
       return _i9.MaterialPageX<dynamic>(
@@ -46,30 +46,26 @@ class AppRouter extends _i9.RootStackRouter {
       return _i9.MaterialPageX<dynamic>(
           routeData: routeData, child: const _i6.SettingsPage());
     },
-    SampleItemDetailsRoute.name: (routeData) {
-      final args = routeData.argsAs<SampleItemDetailsRouteArgs>();
+    AuthRoute.name: (routeData) {
       return _i9.MaterialPageX<dynamic>(
-          routeData: routeData,
-          child: _i7.SampleItemDetailsPage(key: args.key, id: args.id));
+          routeData: routeData, child: const _i7.AuthPage());
     },
-    CreateUserRoute.name: (routeData) {
-      final args = routeData.argsAs<CreateUserRouteArgs>(
-          orElse: () => const CreateUserRouteArgs());
+    ProfileRoute.name: (routeData) {
       return _i9.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i8.CreateUserPage(key: args.key));
+          routeData: routeData, child: const _i8.ProfilePage());
     }
   };
 
   @override
   List<_i9.RouteConfig> get routes => [
         _i9.RouteConfig(SplashRoute.name, path: '/'),
-        _i9.RouteConfig(HomeRoute.name, path: '/home'),
+        _i9.RouteConfig(MainRoute.name, path: '/'),
         _i9.RouteConfig(ScheduleRoute.name, path: '/schedule'),
         _i9.RouteConfig(GradesRoute.name, path: '/grades'),
         _i9.RouteConfig(NotesRoute.name, path: '/notes'),
         _i9.RouteConfig(SettingsRoute.name, path: '/settings'),
-        _i9.RouteConfig(SampleItemDetailsRoute.name, path: '/details'),
-        _i9.RouteConfig(CreateUserRoute.name, path: '/signup')
+        _i9.RouteConfig(AuthRoute.name, path: '/login'),
+        _i9.RouteConfig(ProfileRoute.name, path: '/profile')
       ];
 }
 
@@ -80,11 +76,11 @@ class SplashRoute extends _i9.PageRouteInfo<void> {
   static const String name = 'SplashRoute';
 }
 
-/// generated route for [_i2.HomePage]
-class HomeRoute extends _i9.PageRouteInfo<void> {
-  const HomeRoute() : super(name, path: '/home');
+/// generated route for [_i2.MainPage]
+class MainRoute extends _i9.PageRouteInfo<void> {
+  const MainRoute() : super(name, path: '/');
 
-  static const String name = 'HomeRoute';
+  static const String name = 'MainRoute';
 }
 
 /// generated route for [_i3.SchedulePage]
@@ -115,35 +111,16 @@ class SettingsRoute extends _i9.PageRouteInfo<void> {
   static const String name = 'SettingsRoute';
 }
 
-/// generated route for [_i7.SampleItemDetailsPage]
-class SampleItemDetailsRoute
-    extends _i9.PageRouteInfo<SampleItemDetailsRouteArgs> {
-  SampleItemDetailsRoute({_i10.Key? key, required int id})
-      : super(name,
-            path: '/details',
-            args: SampleItemDetailsRouteArgs(key: key, id: id));
+/// generated route for [_i7.AuthPage]
+class AuthRoute extends _i9.PageRouteInfo<void> {
+  const AuthRoute() : super(name, path: '/login');
 
-  static const String name = 'SampleItemDetailsRoute';
+  static const String name = 'AuthRoute';
 }
 
-class SampleItemDetailsRouteArgs {
-  const SampleItemDetailsRouteArgs({this.key, required this.id});
+/// generated route for [_i8.ProfilePage]
+class ProfileRoute extends _i9.PageRouteInfo<void> {
+  const ProfileRoute() : super(name, path: '/profile');
 
-  final _i10.Key? key;
-
-  final int id;
-}
-
-/// generated route for [_i8.CreateUserPage]
-class CreateUserRoute extends _i9.PageRouteInfo<CreateUserRouteArgs> {
-  CreateUserRoute({_i10.Key? key})
-      : super(name, path: '/signup', args: CreateUserRouteArgs(key: key));
-
-  static const String name = 'CreateUserRoute';
-}
-
-class CreateUserRouteArgs {
-  const CreateUserRouteArgs({this.key});
-
-  final _i10.Key? key;
+  static const String name = 'ProfileRoute';
 }

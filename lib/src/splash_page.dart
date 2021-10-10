@@ -5,20 +5,19 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 48),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
+        child: Center(
+          child: SizedBox(
+            width: size.width * 0.5,
+            child: Image.asset(
               'assets/icon/icon.png',
+              width: 128,
+              height: 128,
             ),
-            const SizedBox(
-              height: 16,
-            ),
-            const LinearProgressIndicator(),
-          ],
+          ),
         ),
       ),
     );

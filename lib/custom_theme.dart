@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CustomTheme {
-  static ThemeData get light => ThemeData(
+  static ThemeData get light => ThemeData.light().copyWith(
         primaryColor: Colors.green[300],
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.green[300],
           titleTextStyle: const TextStyle(fontSize: 20),
         ),
+        primaryIconTheme: IconThemeData(color: Colors.green[300]),
         scaffoldBackgroundColor: Colors.white,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
@@ -24,12 +25,14 @@ class CustomTheme {
         ),
       );
 
-  static ThemeData get dark => ThemeData(
+  static ThemeData get dark => ThemeData.dark().copyWith(
         brightness: Brightness.dark,
         primaryColor: const Color.fromRGBO(32, 35, 42, 1),
         iconTheme: const IconThemeData(
           color: Color.fromRGBO(97, 218, 251, 1),
         ),
+        primaryIconTheme:
+            const IconThemeData(color: Color.fromRGBO(97, 218, 251, 1)),
         scaffoldBackgroundColor: const Color.fromRGBO(40, 44, 52, 1),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color.fromRGBO(32, 35, 42, 1),
