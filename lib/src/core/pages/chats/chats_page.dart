@@ -9,53 +9,12 @@ class ChatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Chats',
-        scaffoldContext: context,
-      ),
-      body: PageFlipBuilder(
-        key: pageFlipKey,
-        frontBuilder: (_) => LightHomePage(
-          onFlip: () => pageFlipKey.currentState?.flip(),
+        appBar: CustomAppBar(
+          title: 'Chats',
+          scaffoldContext: context,
         ),
-        backBuilder: (_) => DarkHomePage(
-          onFlip: () => pageFlipKey.currentState?.flip(),
-        ),
-      ),
-    );
-  }
-}
-
-class LightHomePage extends StatelessWidget {
-  const LightHomePage({Key? key, required this.onFlip}) : super(key: key);
-  final VoidCallback onFlip;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onFlip();
-      },
-      child: Center(
-        child: Text('Front Chats'),
-      ),
-    );
-  }
-}
-
-class DarkHomePage extends StatelessWidget {
-  const DarkHomePage({Key? key, required this.onFlip}) : super(key: key);
-  final VoidCallback onFlip;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onFlip();
-      },
-      child: Center(
-        child: Text('Back Chats'),
-      ),
-    );
+        body: Center(
+          child: Text('Chats listview'),
+        ));
   }
 }

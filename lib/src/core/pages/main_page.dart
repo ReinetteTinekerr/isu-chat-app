@@ -3,13 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isu_chat_system/src/authentication/auth_required_state.dart';
 import 'package:isu_chat_system/src/authentication/provider/providers.dart';
+import 'package:isu_chat_system/src/constants.dart';
 import 'package:isu_chat_system/src/core/pages/home/menu_item.dart';
-import 'package:isu_chat_system/src/core/pages/chats/chats_page.dart';
-import 'package:isu_chat_system/src/core/pages/courses/courses_page.dart';
-import 'package:isu_chat_system/src/core/pages/departments/departments_page.dart';
-import 'package:isu_chat_system/src/core/pages/global/global_page.dart';
-import 'package:isu_chat_system/src/core/pages/home/home_page.dart';
+import 'package:supabase/supabase.dart';
+
 import 'package:isu_chat_system/src/routes/app_router.gr.dart';
 
 import 'home/sample_item.dart';
@@ -30,96 +29,57 @@ class DefaultDrawerItems {
 }
 
 /// Displays a list of SampleItems.
-class MainPage extends ConsumerStatefulWidget {
+class MainPage extends StatefulWidget {
   const MainPage({
     Key? key,
   }) : super(key: key);
 
-  final List<SampleItem> items = const [
-    SampleItem(1),
-    SampleItem(2),
-    SampleItem(3)
-  ];
+  // final List<SampleItem> items = const [
+  //   SampleItem(1),
+  //   SampleItem(2),
+  //   SampleItem(3)
+  // ];
 
   @override
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends ConsumerState<MainPage> {
-  final screens = <Widget>[
-    HomePage(),
-    ChatsPage(),
-    DepartmentsPage(),
-    CoursesPage(),
-    GlobalPage()
-  ];
-  int currentIndex = 0;
-
+class _MainPageState extends AuthRequiredState<MainPage> {
   @override
   void initState() {
     super.initState();
   }
 
-  AppBar appBarData(BuildContext context) {
-    return AppBar(
-      shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(2)),
-      leading: Builder(
-        builder: (context) => Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            child: const CircleAvatar(),
-            onTap: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
-        ),
-      ),
-      title: const Text('Home'),
-      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () {
-            // Navigate to the settings page. If the user leaves and returns
-            // to the app after it has been killed while running in the
-            // background, the navigation stack is restored.
-          },
-        ),
-      ],
-    );
+  @override
+  void onAuthenticated(Session session) {
+    final user = session.user;
+    print('hey user~~~~~ ${user!.id}');
   }
 
-  BottomNavigationBar bottomNavBarData() {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      // showSelectedLabels: false,
-      showUnselectedLabels: false,
-      showSelectedLabels: false,
-      currentIndex: currentIndex,
-      onTap: (index) => setState(() => currentIndex = index),
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.groups), label: 'Chats'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.workspaces),
-          label: 'Department',
-        ),
-        BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Course'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.alternate_email),
-          label: 'Global',
-        ),
-      ],
+  @override
+  void onUnauthenticated() {
+    AutoRouter.of(context).pushAndPopUntil(
+      const AuthRoute(),
+      predicate: (route) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     {
-      return Scaffold(
+      return AutoTabsScaffold(
+        animationCurve: Curves.easeIn,
+        routes: [
+          HomeRoute(),
+          ChatsRoute(),
+          DepartmentsRoute(),
+          CoursesRoute(),
+          GlobalRoute()
+        ],
         drawer: const SafeArea(child: CustomDrawer()),
-        bottomNavigationBar: bottomNavBarData(),
-        body: screens[currentIndex],
+        bottomNavigationBuilder: (_, tabsRouter) {
+          return bottomNavigationBarBuilder(tabsRouter);
+        },
 
         // body: ListView.builder(
         //   restorationId: 'sampleItemListView',
@@ -142,6 +102,32 @@ class _MainPageState extends ConsumerState<MainPage> {
         // ),
       );
     }
+  }
+
+  BottomNavigationBar bottomNavigationBarBuilder(TabsRouter tabsRouter) {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      currentIndex: tabsRouter.activeIndex,
+      onTap: tabsRouter.setActiveIndex,
+      showUnselectedLabels: false,
+      showSelectedLabels: false,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.workspaces),
+          label: 'Department',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.school),
+          label: 'Course',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.alternate_email),
+          label: 'Global',
+        ),
+      ],
+    );
   }
 }
 
@@ -249,15 +235,25 @@ class CustomDrawer extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(
-                          Icons.logout,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {},
-                      ),
-                      IconButton(
                         icon: const Icon(Icons.help_outline_sharp),
-                        onPressed: () {},
+                        onPressed: () {
+                          showAboutDialog(
+                            context: context,
+                            applicationName: 'ISU Chat App',
+                            applicationIcon: Image.asset(
+                              'assets/icon/icon.png',
+                              width: 32,
+                              height: 32,
+                            ),
+                            children: [
+                              const Text(
+                                'Developers:',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              const Text(developers),
+                            ],
+                          );
+                        },
                       ),
                       IconButton(
                         icon: Icon(

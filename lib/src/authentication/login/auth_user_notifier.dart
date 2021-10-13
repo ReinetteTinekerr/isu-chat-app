@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:isu_chat_system/src/constants.dart';
+import 'package:supabase/supabase.dart';
 
 part 'auth_user_notifier.freezed.dart';
 
@@ -13,21 +17,31 @@ class AuthUserState with _$AuthUserState {
 }
 
 class AuthUserNotifier extends StateNotifier<AuthUserState> {
-  AuthUserNotifier() : super(const AuthUserState.initial());
-
-  bool signedIn = false;
+  AuthUserNotifier(this.supabase) : super(const AuthUserState.initial());
+  final SupabaseClient supabase;
+  bool get isSignedIn => supabase.auth.currentUser != null;
 
   Future<void> checkAndUpdateAuthStatus() async {
-    Future.delayed(
-      const Duration(seconds: 0),
-      () => state = signedIn
-          ? const AuthUserState.authenticated()
-          : const AuthUserState.unauthenticated(),
-    );
+    state = isSignedIn
+        ? const AuthUserState.authenticated()
+        : const AuthUserState.unauthenticated();
   }
 
-  Future<void> signIn() async {
-    signedIn = true;
-    state = const AuthUserState.authenticated();
+  Future<void> signIn(BuildContext context, TextEditingController email) async {
+    final response = await supabase.auth.signUp(
+      email.text,
+      'test123',
+      options: AuthOptions(
+        redirectTo:
+            kIsWeb ? null : 'io.supabase.flutterquickstart://login-callback/',
+      ),
+    );
+    final error = response.error;
+    if (error != null) {
+      context.showErrorSnackBar(message: error.message);
+    } else {
+      context.showSnackBar(message: 'Check your email for login link!');
+      email.clear();
+    }
   }
 }

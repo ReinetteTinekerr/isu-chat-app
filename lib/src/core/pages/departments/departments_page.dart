@@ -13,48 +13,8 @@ class DepartmentsPage extends StatelessWidget {
         title: 'Department',
         scaffoldContext: context,
       ),
-      body: PageFlipBuilder(
-        key: pageFlipKey,
-        frontBuilder: (_) => LightHomePage(
-          onFlip: () => pageFlipKey.currentState?.flip(),
-        ),
-        backBuilder: (_) => DarkHomePage(
-          onFlip: () => pageFlipKey.currentState?.flip(),
-        ),
-      ),
-    );
-  }
-}
-
-class LightHomePage extends StatelessWidget {
-  const LightHomePage({Key? key, required this.onFlip}) : super(key: key);
-  final VoidCallback onFlip;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onFlip();
-      },
-      child: Center(
-        child: Text('Front Department'),
-      ),
-    );
-  }
-}
-
-class DarkHomePage extends StatelessWidget {
-  const DarkHomePage({Key? key, required this.onFlip}) : super(key: key);
-  final VoidCallback onFlip;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onFlip();
-      },
-      child: Center(
-        child: Text('Back Department'),
+      body: Center(
+        child: Text('Departments listview'),
       ),
     );
   }

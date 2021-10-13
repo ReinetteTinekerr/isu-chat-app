@@ -28,6 +28,7 @@ class CustomTheme {
   static ThemeData get dark => ThemeData.dark().copyWith(
         brightness: Brightness.dark,
         primaryColor: const Color.fromRGBO(32, 35, 42, 1),
+        primaryColorDark: const Color.fromRGBO(97, 218, 251, 1),
         iconTheme: const IconThemeData(
           color: Color.fromRGBO(97, 218, 251, 1),
         ),

@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:isu_chat_system/src/authentication/auth_state.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
+
+  @override
+  _SplashPageState createState() => _SplashPageState();
+}
+
+class _SplashPageState extends AuthState<SplashPage> {
+  @override
+  void initState() {
+    recoverSupabaseSession();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

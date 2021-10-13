@@ -26,13 +26,16 @@ class PageFlipBuilderState extends State<PageFlipBuilder>
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 800),
+      lowerBound: -1,
+      upperBound: 1,
     );
+    _controller.value = 0;
     _controller.addStatusListener(_updateStatus);
 
-    _controller.addListener(() {
-      print('value: ${_controller.value}');
-    });
+    // _controller.addListener(() {
+    //   print('value: ${_controller.value}');
+    // });
     super.initState();
   }
 
@@ -60,12 +63,41 @@ class PageFlipBuilderState extends State<PageFlipBuilder>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedPageFlipBuilder(
-      animation: _controller,
-      showFrontSide: _showFrontSide,
-      frontBuilder: widget.frontBuilder,
-      backBuilder: widget.backBuilder,
+    return GestureDetector(
+      onHorizontalDragUpdate: _handleDragUpdate,
+      onHorizontalDragEnd: _handleDragEnd,
+      child: AnimatedPageFlipBuilder(
+        animation: _controller,
+        showFrontSide: _showFrontSide,
+        frontBuilder: widget.frontBuilder,
+        backBuilder: widget.backBuilder,
+      ),
     );
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    _controller.value += details.primaryDelta! / screenWidth * 1.5;
+    print('c ${_controller.value}');
+    if (_controller.value == -1 || _controller.value == 1) {
+      _controller.value *= -1;
+    }
+  }
+
+  void _handleDragEnd(DragEndDetails details) {
+    print('stop');
+    if (_controller.value >= 0.5) {
+      _controller.forward();
+      print('> 0.5');
+      setState(() => _showFrontSide = !_showFrontSide);
+    } else if (_controller.value <= -0.5) {
+      _controller.reverse();
+      print('> -0.5');
+      setState(() => _showFrontSide = !_showFrontSide);
+    } else {
+      print(_controller.value);
+      _controller.reverse();
+    }
   }
 }
 
@@ -82,23 +114,38 @@ class AnimatedPageFlipBuilder extends StatelessWidget {
   final WidgetBuilder frontBuilder;
   final WidgetBuilder backBuilder;
 
+  bool get _isAnimationFirstHalf => animation.value.abs() < 0.5;
+
+  double _getTilt() {
+    var tilt = (animation.value - 0.5).abs() - 0.5;
+    if (animation.value < -0.5) {
+      tilt = 1.0 + animation.value;
+    }
+    return tilt * (_isAnimationFirstHalf ? -0.003 : 0.003);
+  }
+
+  double _rotationAngle() {
+    final rotationValue = animation.value * pi;
+    if (animation.value > 0.5) {
+      return pi - rotationValue; // input from 0.5 to 1.0
+    } else if (animation.value > -0.5) {
+      return rotationValue; // input from -0.5 to 0.5
+    } else {
+      return -pi - rotationValue; // input from -1.0 to -0.5
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, _) {
-        // this boolean tells us if we're on the first or second half of the animation
-        final isAnimationFirstHalf = animation.value.abs() < 0.5;
-        // decide which page we need to show
-        final child =
-            isAnimationFirstHalf ? frontBuilder(context) : backBuilder(context);
-        // map values between [0, 1] to values between [0, pi]
-        final rotationValue = animation.value * pi;
-        // calculate the correct rotation angle depening on which page we need to show
-        final rotationAngle =
-            animation.value > 0.5 ? pi - rotationValue : rotationValue;
+        final child = _isAnimationFirstHalf
+            ? frontBuilder(context)
+            : backBuilder(context);
         return Transform(
-          transform: Matrix4.rotationY(rotationAngle),
+          transform: Matrix4.rotationY(_rotationAngle())
+            ..setEntry(3, 0, _getTilt()),
           child: child,
           alignment: Alignment.center,
         );

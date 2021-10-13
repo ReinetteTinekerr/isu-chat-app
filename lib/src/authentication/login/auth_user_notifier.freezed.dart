@@ -126,12 +126,18 @@ class __$InitialCopyWithImpl<$Res> extends _$AuthUserStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Initial extends _Initial {
+class _$_Initial extends _Initial with DiagnosticableTreeMixin {
   const _$_Initial() : super._();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthUserState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(DiagnosticsProperty('type', 'AuthUserState.initial'));
   }
 
   @override
@@ -243,12 +249,18 @@ class __$AuthenticatedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Authenticated extends _Authenticated {
+class _$_Authenticated extends _Authenticated with DiagnosticableTreeMixin {
   const _$_Authenticated() : super._();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthUserState.authenticated()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(DiagnosticsProperty('type', 'AuthUserState.authenticated'));
   }
 
   @override
@@ -360,12 +372,19 @@ class __$UnAuthenticatedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_UnAuthenticated extends _UnAuthenticated {
+class _$_UnAuthenticated extends _UnAuthenticated with DiagnosticableTreeMixin {
   const _$_UnAuthenticated() : super._();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthUserState.unauthenticated()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AuthUserState.unauthenticated'));
   }
 
   @override
@@ -474,12 +493,18 @@ class __$FailureCopyWithImpl<$Res> extends _$AuthUserStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Failure extends _Failure {
+class _$_Failure extends _Failure with DiagnosticableTreeMixin {
   const _$_Failure() : super._();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AuthUserState.failure()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties..add(DiagnosticsProperty('type', 'AuthUserState.failure'));
   }
 
   @override

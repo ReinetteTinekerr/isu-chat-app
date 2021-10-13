@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isu_chat_system/custom_theme.dart';
 import 'package:isu_chat_system/src/authentication/provider/providers.dart';
 import 'package:isu_chat_system/src/routes/app_router.gr.dart';
+import 'package:supabase/supabase.dart';
 
 final initializeSettingsProvider = FutureProvider<void>((ref) async {
   final settings = ref.watch(settingsControllerProvider.notifier);
@@ -30,26 +31,35 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = ref.watch(settingsControllerProvider);
 
-    ref.watch(authUserNotifierProvider.notifier).addListener((state) {
-      state.maybeWhen(
-        orElse: () {},
-        authenticated: () => appRouter.pushAndPopUntil(
-          const MainRoute(),
-          predicate: (route) => false,
-        ),
-        unauthenticated: () {
-          appRouter.pushAndPopUntil(
-            const AuthRoute(),
-            predicate: (route) => false,
-          );
-        },
-        initial: () async {
-          ref
-              .watch(authUserNotifierProvider.notifier)
-              .checkAndUpdateAuthStatus();
-        },
-      );
-    });
+    // supabase.auth.onAuthStateChange((event, session) {
+    //   if (event == AuthChangeEvent.signedIn) {
+    //     appRouter.pushAndPopUntil(
+    //       const MainRoute(),
+    //       predicate: (route) => false,
+    //     );
+    //   }
+    // });
+
+    // ref.watch(authUserNotifierProvider.notifier).addListener((state) {
+    //   state.maybeWhen(
+    //     orElse: () {},
+    //     authenticated: () => appRouter.pushAndPopUntil(
+    //       const MainRoute(),
+    //       predicate: (route) => false,
+    //     ),
+    //     unauthenticated: () {
+    //       appRouter.pushAndPopUntil(
+    //         const AuthRoute(),
+    //         predicate: (route) => false,
+    //       );
+    //     },
+    //     initial: () async {
+    //       ref
+    //           .watch(authUserNotifierProvider.notifier)
+    //           .checkAndUpdateAuthStatus();
+    //     },
+    //   );
+    // });
     return MaterialApp.router(
       title: 'isu_chat_app',
       restorationScopeId: 'app',

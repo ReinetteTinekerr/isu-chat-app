@@ -32,13 +32,8 @@ class LightHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onFlip();
-      },
-      child: Center(
-        child: Text('Front Global'),
-      ),
+    return Center(
+      child: Text('Front Global'),
     );
   }
 }
