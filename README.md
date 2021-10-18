@@ -1,4 +1,4 @@
-# isu_chat_system
+# isu_chat_app
 
 A new Flutter project.
 
